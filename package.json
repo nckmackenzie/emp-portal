@@ -17,6 +17,8 @@
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.19",
+    "@headlessui/tailwindcss": "^0.2.0",
     "@hookform/resolvers": "^3.3.4",
     "@lucia-auth/adapter-drizzle": "^1.0.7",
     "@paralleldrive/cuid2": "^2.2.2",
@@ -34,6 +36,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@tanstack/react-table": "^8.16.0",
+    "@tremor/react": "^3.16.2",
     "bcrypt-ts": "^5.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -56,6 +59,7 @@
     "zod": "^3.23.4"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
