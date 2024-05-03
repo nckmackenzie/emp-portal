@@ -40,14 +40,7 @@ export const login = async (values: TLogin) => {
   const passwordMatches = await compare(password, user.password!);
   if (!passwordMatches) return { error: 'Invalid contact or password!' };
 
-  const session = await lucia.createSession(user.id, {
-    name: user.name,
-    employeeType: user.employeeType as
-      | 'NON-UNIONISABLE'
-      | 'MANEGEMENT'
-      | 'UNIONISABLE',
-    image: user.image,
-  });
+  const session = await lucia.createSession(user.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,
