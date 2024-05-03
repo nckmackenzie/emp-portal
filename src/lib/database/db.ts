@@ -10,7 +10,7 @@ const db = drizzle(client, { schema });
 export const adapter = new DrizzlePostgreSQLAdapter(
   db,
   schema.employeeSession,
-  schema.users
+  schema.employeeUsers
 );
 
 export default db;
