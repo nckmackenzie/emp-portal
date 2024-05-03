@@ -53,8 +53,6 @@ export default function LoginForm() {
     });
   }
 
-  console.log(error);
-
   return (
     <div className="space-y-4">
       {error && <Alert variant="destructive" message={error} />}
