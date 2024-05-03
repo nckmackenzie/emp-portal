@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { compare, hash } from 'bcrypt-ts';
 import { createId, isCuid } from '@paralleldrive/cuid2';
 
-import { lucia } from '../../../../auth';
+import { lucia, validateRequest } from '../../../../auth';
 import db from '@/lib/database/db';
 import { TLogin } from '../_types';
 import { changePasswordSchema, loginSchema } from '../_utils/schema';
@@ -112,4 +112,23 @@ export const changePassword = async (passwords: any, token: string) => {
   );
 
   return redirect('/dashboard');
+};
+
+export const logout = async () => {
+  const { session } = await validateRequest();
+  if (!session) {
+    return {
+      error: 'Unauthorized',
+    };
+  }
+
+  await lucia.invalidateSession(session.id);
+
+  const sessionCookie = lucia.createBlankSessionCookie();
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+  return redirect('/login');
 };
