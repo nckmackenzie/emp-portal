@@ -22,6 +22,7 @@ export const lucia = new Lucia(adapter, {
       image: attributes.image,
       email: attributes.email,
       employeeType: attributes.employeeType,
+      employeeRefId: attributes.employeeRefId,
     };
   },
   getSessionAttributes: attributes => {
@@ -38,6 +39,7 @@ export const validateRequest = cache(
     { user: User; session: Session } | { user: null; session: null }
   > => {
     const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
+
     if (!sessionId) {
       return {
         user: null,
@@ -46,6 +48,7 @@ export const validateRequest = cache(
     }
 
     const result = await lucia.validateSession(sessionId);
+
     // next.js throws when you attempt to set cookie when rendering page
     try {
       if (result.session && result.session.fresh) {
@@ -85,6 +88,7 @@ interface DatabaseUserAttributes {
   image: string | null;
   email: string | null;
   employeeType: EMPLOYEECATEGORY;
+  employeeRefId: number;
 }
 
 interface DatabaseSessionAttributes {
