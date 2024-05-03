@@ -25,7 +25,7 @@ import { Alert } from '@/components/ui/alert';
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
 
   function togglePassword() {
@@ -45,11 +45,15 @@ export default function LoginForm() {
     startTransition(() => {
       login(values)
         .then(data => {
-          if (data.error) setError(data.error);
+          if (data?.error) {
+            setError(data.error);
+          }
         })
         .catch(err => setError(err.message));
     });
   }
+
+  console.log(error);
 
   return (
     <div className="space-y-4">
