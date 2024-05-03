@@ -3,24 +3,20 @@ import { z } from 'zod';
 export const leaveApplicationSchema = z
   .object({
     leaveRef: z.coerce.number({ required_error: 'Leave ref missing.' }),
-    applicationDate: z.coerce.date({
+    applicationDate: z.string({
       required_error: 'Application date is required.',
     }),
-    employeeCategory: z.enum(['UNIONISABLE', 'MANAGEMENT', 'NON-UNIONISABLE'], {
-      required_error: 'Select category',
-    }),
-    employeeId: z.coerce.number({ required_error: 'Employee is required.' }),
-    startDate: z.coerce.date({
+    startDate: z.string({
       required_error: 'Select start date for this leave.',
     }),
-    endDate: z.coerce.date({
+    endDate: z.string({
       required_error: 'Select end date for this leave.',
     }),
     leaveType: z.string({ required_error: 'Select leave type.' }),
     reason: z.string({
       required_error: 'Enter reason for applying for leave.',
     }),
-    resumeDate: z.coerce.date({ required_error: 'Enter resumption date.' }),
+    resumeDate: z.string({ required_error: 'Enter resumption date.' }),
     hasHalfDay: z.boolean().default(false).optional(),
     attachment: z.string().optional(),
   })
@@ -33,6 +29,7 @@ export const leaveApplicationSchema = z
         resumeDate,
         leaveType,
         attachment,
+        reason,
       },
       ctx
     ) => {
@@ -57,7 +54,14 @@ export const leaveApplicationSchema = z
           path: ['resumeDate'],
         });
       }
-      if (leaveType === '3' && !attachment) {
+      if (leaveType === '1' && !reason.trim().length) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Enter reason for applying for leave.',
+          path: ['reason'],
+        });
+      }
+      if (leaveType === '2' && !attachment) {
         ctx.addIssue({
           code: 'custom',
           message: 'An attachment is required for this leave.',
