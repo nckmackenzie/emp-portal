@@ -25,13 +25,13 @@ export const lucia = new Lucia(adapter, {
       employeeRefId: attributes.employeeRefId,
     };
   },
-  getSessionAttributes: attributes => {
-    return {
-      name: attributes.name,
-      employeeType: attributes.employeeType,
-      image: attributes.image,
-    };
-  },
+  // getSessionAttributes: attributes => {
+  //   return {
+  //     name: attributes.name,
+  //     employeeType: attributes.employeeType,
+  //     image: attributes.image,
+  //   };
+  // },
 });
 
 export const validateRequest = cache(
@@ -77,7 +77,7 @@ declare module 'lucia' {
   interface Register {
     Lucia: typeof lucia;
     DatabaseUserAttributes: DatabaseUserAttributes;
-    DatabaseSessionAttributes: DatabaseSessionAttributes;
+    // DatabaseSessionAttributes: DatabaseSessionAttributes;
   }
 }
 
@@ -91,8 +91,8 @@ interface DatabaseUserAttributes {
   employeeRefId: number;
 }
 
-interface DatabaseSessionAttributes {
-  name: string;
-  employeeType: EMPLOYEECATEGORY;
-  image: string | null;
-}
+// interface DatabaseSessionAttributes {
+//   name: string;
+//   employeeType: EMPLOYEECATEGORY;
+//   image: string | null;
+// }
