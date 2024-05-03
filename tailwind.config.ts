@@ -1,7 +1,8 @@
 import type { Config } from 'tailwindcss';
 import colors from 'tailwindcss/colors';
+import { withUt } from 'uploadthing/tw';
 
-const config = {
+export default withUt({
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -198,6 +199,10 @@ const config = {
     require('@headlessui/tailwindcss'),
     require('@tailwindcss/forms'),
   ],
-} satisfies Config;
+});
 
-export default config;
+// const config = {
+
+// } satisfies Config;
+
+// export default config;
