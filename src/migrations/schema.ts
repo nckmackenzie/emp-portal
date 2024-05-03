@@ -95,6 +95,11 @@ export const maritalStatusEnum = pgEnum('maritalStatusEnum', [
   'SINGLE',
 ]);
 export const bloodTypeEnum = pgEnum('bloodTypeEnum', ['O', 'AB', 'B', 'A']);
+export const leaveStatusEnum = pgEnum('leaveStatusEnum', [
+  'REJECTED',
+  'APPROVED',
+  'PENDING',
+]);
 
 export const forms = pgTable('forms', {
   id: serial('id').primaryKey().notNull(),
@@ -603,6 +608,37 @@ export const employeeUsers = pgTable(
     };
   }
 );
+
+export const leaveApplications = pgTable('leave_applications', {
+  leaveNo: integer('leave_no').primaryKey().notNull(),
+  employeeCategory: employeeCategory('employee_category').notNull(),
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  leaveTypeId: integer('leave_type_id')
+    .notNull()
+    .references(() => leaveTypes.id, { onDelete: 'cascade' }),
+  applicationDate: date('application_date').defaultNow().notNull(),
+  startDate: date('start_date').notNull(),
+  endDate: date('end_date').notNull(),
+  resumeDate: date('resume_date').notNull(),
+  daysTaken: numeric('days_taken').notNull(),
+  leaveStatus: leaveStatusEnum('leave_status').default('PENDING').notNull(),
+  reason: text('reason'),
+  authorizedBy: uuid('authorized_by').references(() => users.id),
+  approvedBy: uuid('approved_by').references(() => users.id),
+  isUnpaid: boolean('is_unpaid').default(false),
+  isDeleted: boolean('is_deleted').default(false).notNull(),
+});
+
+export const leaveTypes = pgTable('leave_types', {
+  id: integer('id').primaryKey().notNull(),
+  leaveTypeName: varchar('leave_type_name').notNull(),
+  allocationManagement: numeric('allocation_management').notNull(),
+  allocationWorkshop: numeric('allocation_workshop').notNull(),
+  isPaidLeave: boolean('is_paid_leave').notNull(),
+  requiresAttachment: boolean('requires_attachment').default(false).notNull(),
+});
 
 export const userRoles = pgTable(
   'user_roles',
