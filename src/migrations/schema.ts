@@ -117,7 +117,7 @@ export const session = pgTable('session', {
     .references(() => users.id, { onDelete: 'cascade' }),
   expiresAt: timestamp('expires_at', {
     withTimezone: true,
-    mode: 'string',
+    mode: 'date',
   }).notNull(),
 });
 
@@ -609,6 +609,15 @@ export const employeeUsers = pgTable(
   }
 );
 
+export const leaveTypes = pgTable('leave_types', {
+  id: integer('id').primaryKey().notNull(),
+  leaveTypeName: varchar('leave_type_name').notNull(),
+  allocationManagement: numeric('allocation_management').notNull(),
+  allocationWorkshop: numeric('allocation_workshop').notNull(),
+  isPaidLeave: boolean('is_paid_leave').notNull(),
+  requiresAttachment: boolean('requires_attachment').default(false).notNull(),
+});
+
 export const leaveApplications = pgTable('leave_applications', {
   leaveNo: integer('leave_no').primaryKey().notNull(),
   employeeCategory: employeeCategory('employee_category').notNull(),
@@ -629,15 +638,7 @@ export const leaveApplications = pgTable('leave_applications', {
   approvedBy: uuid('approved_by').references(() => users.id),
   isUnpaid: boolean('is_unpaid').default(false),
   isDeleted: boolean('is_deleted').default(false).notNull(),
-});
-
-export const leaveTypes = pgTable('leave_types', {
-  id: integer('id').primaryKey().notNull(),
-  leaveTypeName: varchar('leave_type_name').notNull(),
-  allocationManagement: numeric('allocation_management').notNull(),
-  allocationWorkshop: numeric('allocation_workshop').notNull(),
-  isPaidLeave: boolean('is_paid_leave').notNull(),
-  requiresAttachment: boolean('requires_attachment').default(false).notNull(),
+  attachmentUrl: text('attachment_url'),
 });
 
 export const userRoles = pgTable(
