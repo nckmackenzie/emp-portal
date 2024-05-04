@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 
 import {
@@ -8,7 +9,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import DashboardCards from './_components/dashboard-cards';
-import LeaveApplications from './_components/leave-applications';
+import LeaveApplications, {
+  LeaveTableSkeleton,
+} from './_components/leave-applications';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -24,7 +27,9 @@ export default function DashboardPage() {
           <CardDescription>List of all days applied.</CardDescription>
         </CardHeader>
         <CardContent>
-          <LeaveApplications />
+          <Suspense fallback={<LeaveTableSkeleton />}>
+            <LeaveApplications />
+          </Suspense>
         </CardContent>
       </Card>
     </div>
