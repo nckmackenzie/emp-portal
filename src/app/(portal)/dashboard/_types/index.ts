@@ -1,7 +1,7 @@
-export type TLeaveApplication = {
-  AppliedDate: Date;
-  FromDate: Date;
-  ToDate: Date;
-  NumberOfDays: number;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-};
+import { getAppliedLeaves } from '../../leave-application/_services';
+
+export type TLeaveApplication = Awaited<
+  ReturnType<typeof getAppliedLeaves>
+> extends (infer U)[]
+  ? U
+  : never;
