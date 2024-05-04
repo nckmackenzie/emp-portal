@@ -8,44 +8,38 @@ import { Badge } from '@/components/ui/badge';
 
 import { TLeaveApplication } from '../_types';
 
-const data: TLeaveApplication[] = [
-  {
-    AppliedDate: new Date('2024-04-01'),
-    FromDate: new Date('2024-04-03'),
-    ToDate: new Date('2024-04-04'),
-    NumberOfDays: 2,
-    status: 'PENDING',
-  },
-];
-
-export default function LeaveAppliedTable() {
+export default function LeaveAppliedTable({
+  data,
+}: {
+  data: TLeaveApplication[];
+}) {
   const columns: ColumnDef<TLeaveApplication>[] = [
     {
-      accessorKey: 'AppliedDate',
+      accessorKey: 'applicationDate',
       header: 'Applied Date',
       cell: ({ row }) => (
-        <div>{format(row.getValue('AppliedDate'), 'PPP')}</div>
+        <div>{format(row.getValue('applicationDate'), 'PPP')}</div>
       ),
     },
     {
-      accessorKey: 'FromDate',
+      accessorKey: 'startDate',
       header: 'From Date',
-      cell: ({ row }) => <div>{format(row.getValue('FromDate'), 'PPP')}</div>,
+      cell: ({ row }) => <div>{format(row.getValue('startDate'), 'PPP')}</div>,
     },
     {
-      accessorKey: 'ToDate',
+      accessorKey: 'endDate',
       header: 'To Date',
-      cell: ({ row }) => <div>{format(row.getValue('ToDate'), 'PPP')}</div>,
+      cell: ({ row }) => <div>{format(row.getValue('endDate'), 'PPP')}</div>,
     },
     {
-      accessorKey: 'NumberOfDays',
+      accessorKey: 'daysTaken',
       header: 'Number of days',
     },
     {
-      accessorKey: 'status',
+      accessorKey: 'leaveStatus',
       header: 'Status',
       cell: ({ row }) => {
-        const status = row.getValue('status');
+        const status = row.getValue('leaveStatus');
         return (
           <div>
             <Badge
@@ -57,7 +51,7 @@ export default function LeaveAppliedTable() {
                   : 'warning'
               }
             >
-              {row.getValue('status')}
+              {row.getValue('leaveStatus')}
             </Badge>
           </div>
         );
