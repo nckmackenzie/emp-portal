@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export const titleCase = (str: string) => {
   return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
 };
+
+export const dummyArray = (length: number) => {
+  return Array.from({ length: length || 5 });
+};
