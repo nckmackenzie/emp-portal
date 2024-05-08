@@ -17,7 +17,7 @@ import {
   uniqueIndex,
   primaryKey,
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 
 export const keyStatus = pgEnum('key_status', [
   'default',
@@ -704,3 +704,16 @@ export const accounts = pgTable(
     };
   }
 );
+
+export const employeeRelations = relations(employees, ({ one, many }) => ({
+  contact: one(employeesContacts, {
+    fields: [employees.id],
+    references: [employeesContacts.employeeId],
+  }),
+  nok: one(employeesNoks),
+  otherDetails: one(employeesOtherdetails, {
+    fields: [employees.id],
+    references: [employeesOtherdetails.employeeId],
+  }),
+  children: many(employeesChildren),
+}));
