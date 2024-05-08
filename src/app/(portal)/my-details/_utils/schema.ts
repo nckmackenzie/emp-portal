@@ -11,26 +11,31 @@ export const employeeSchema = z.object({
     .string({ required_error: 'Provide a phone number.' })
     .min(10, 'Phone number is invalid')
     .max(10, 'Phone number is invalid'),
-  dob: z.string().optional(),
+  dob: z.string({ required_error: 'Date of birth is required.' }),
   maritalStatus: z
     .enum(['SINGLE', 'MARRIED', 'DIVORCED', 'WIDOWED'])
     .optional(),
-  idNo: z.string().optional(),
-  payrollNo: z.string().optional(),
+  idNo: z.string({ required_error: 'ID Number is required.' }),
+  image: z.string().optional(),
   alternativeContact: z.string().optional(),
   postalAddress: z.string().optional(),
   postalCode: z.string().optional(),
   gender: z.enum(['MALE', 'FEMALE'], {
     required_error: 'Gender is required.',
   }),
-  email: z.string().optional(),
-  kraPin: z.string().optional(),
-  nhifNo: z.string().optional(),
-  nssfNo: z.string().optional(),
+  email: z
+    .string({ required_error: 'Email address is required.' })
+    .min(1, 'Email address is required')
+    .email(),
+  kraPin: z.string().min(1, 'Field is required'),
+  nhifNo: z.string().min(1, 'Field is required'),
+  nssfNo: z.string().min(1, 'Field is required'),
 
-  nok1Name: z.string().optional(),
-  nok1Contact: z.string().optional(),
-  nok1Relation: z.string().optional(),
+  nok1Name: z.string({ required_error: 'Name of next of kin is required.' }),
+  nok1Contact: z.string({ required_error: 'Provide contact for next of kin.' }),
+  nok1Relation: z.string({
+    required_error: 'Provide relations for next of kin.',
+  }),
   nok2Name: z.string().optional(),
   nok2Contact: z.string().optional(),
   nok2Relation: z.string().optional(),
