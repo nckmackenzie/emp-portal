@@ -17,9 +17,10 @@ import { TEmployee } from '../_utils/types';
 
 interface OtherDetailsProps {
   form: UseFormReturn<TEmployee>;
+  isPending: boolean;
 }
 
-function OtherDetails({ form }: OtherDetailsProps) {
+function OtherDetails({ form, isPending }: OtherDetailsProps) {
   const [fieldStatus, setFieldStatus] = useState({
     hasConviction: false,
     hasAllergy: false,
@@ -37,6 +38,7 @@ function OtherDetails({ form }: OtherDetailsProps) {
               <FormControl>
                 <RadioGroup
                   defaultValue={form.getValues('conviction') ? 'yes' : 'no'}
+                  disabled={isPending}
                   onValueChange={(value: string) => {
                     field.onChange(value);
                     if (value.trim().toLowerCase() === 'no') {
@@ -76,7 +78,7 @@ function OtherDetails({ form }: OtherDetailsProps) {
                 <Input
                   {...field}
                   placeholder="conviction details"
-                  disabled={!fieldStatus.hasConviction}
+                  disabled={!fieldStatus.hasConviction || isPending}
                 />
               </FormControl>
               <FormMessage />
@@ -94,6 +96,7 @@ function OtherDetails({ form }: OtherDetailsProps) {
               <FormControl>
                 <RadioGroup
                   defaultValue={form.getValues('allergies') ? 'yes' : 'no'}
+                  disabled={isPending}
                   onValueChange={(value: string) => {
                     field.onChange(value);
                     if (value.trim().toLowerCase() === 'no') {
@@ -133,7 +136,7 @@ function OtherDetails({ form }: OtherDetailsProps) {
                 <Input
                   {...field}
                   placeholder="allergy details"
-                  disabled={!fieldStatus.hasAllergy}
+                  disabled={!fieldStatus.hasAllergy || isPending}
                 />
               </FormControl>
               <FormMessage />
@@ -151,6 +154,7 @@ function OtherDetails({ form }: OtherDetailsProps) {
               <FormControl>
                 <RadioGroup
                   defaultValue={form.getValues('illness') ? 'yes' : 'no'}
+                  disabled={isPending}
                   onValueChange={(value: string) => {
                     field.onChange(value);
                     if (value.trim().toLowerCase() === 'no') {
@@ -190,7 +194,7 @@ function OtherDetails({ form }: OtherDetailsProps) {
                 <Input
                   {...field}
                   placeholder="illness details"
-                  disabled={!fieldStatus.hasIllness}
+                  disabled={!fieldStatus.hasIllness || isPending}
                 />
               </FormControl>
               <FormMessage />
@@ -211,6 +215,7 @@ function OtherDetails({ form }: OtherDetailsProps) {
                 onChange={field.onChange}
                 defaultValue={form.getValues('bloodType')}
                 placeholder=""
+                disabled={isPending}
               />
             </FormControl>
             <FormMessage />
