@@ -75,7 +75,7 @@ function PersonalInformation({ form }: PersonalInformationProps) {
               Surname<sup className="text-destructive">*</sup>
             </FormLabel>
             <FormControl>
-              <Input {...field} readOnly />
+              <Input {...field} readOnly className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -90,7 +90,7 @@ function PersonalInformation({ form }: PersonalInformationProps) {
               Other Names<sup className="text-destructive">*</sup>
             </FormLabel>
             <FormControl>
-              <Input {...field} readOnly />
+              <Input {...field} readOnly className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -144,7 +144,7 @@ function PersonalInformation({ form }: PersonalInformationProps) {
               ID Number<sup className="text-destructive">*</sup>
             </FormLabel>
             <FormControl>
-              <Input type="text" {...field} />
+              <Input type="text" {...field} className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>

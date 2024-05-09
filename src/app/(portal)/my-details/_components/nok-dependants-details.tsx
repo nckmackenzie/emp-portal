@@ -41,7 +41,11 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
               NOK Name<sup className="text-destructive">*</sup>
             </FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Name of first Next of kin" />
+              <Input
+                {...field}
+                placeholder="Name of first Next of kin"
+                className="uppercase"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -56,7 +60,11 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
               NOK Contact<sup className="text-destructive">*</sup>
             </FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Contact of first Next of kin" />
+              <Input
+                {...field}
+                placeholder="Contact of first Next of kin"
+                className="uppercase"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -74,6 +82,7 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
               <Input
                 {...field}
                 placeholder="Relationship to first Next of kin"
+                className="uppercase"
               />
             </FormControl>
             <FormMessage />
@@ -87,7 +96,11 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
           <FormItem className="col-span-full md:col-span-4">
             <FormLabel>NOK Name</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Name of second Next of kin" />
+              <Input
+                {...field}
+                placeholder="Name of second Next of kin"
+                className="uppercase"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -100,7 +113,11 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
           <FormItem className="col-span-full md:col-span-4">
             <FormLabel>NOK Contact</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Contact of second Next of kin" />
+              <Input
+                {...field}
+                placeholder="Contact of second Next of kin"
+                className="uppercase"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -116,6 +133,7 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
               <Input
                 {...field}
                 placeholder="Relationship to second Next of kin"
+                className="uppercase"
               />
             </FormControl>
             <FormMessage />
@@ -134,7 +152,7 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
             <FormItem className="flex-grow">
               <FormLabel>Spouse Name</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} className="uppercase" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -177,7 +195,11 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
             <FormItem className="col-span-6">
               <FormLabel>Child Name</FormLabel>
               <FormControl>
-                <Input value={detail.childName} onChange={() => {}} />
+                <Input
+                  value={detail.childName}
+                  onChange={() => {}}
+                  className="uppercase"
+                />
               </FormControl>
             </FormItem>
             <FormItem key={detail.childName} className="col-span-6">
