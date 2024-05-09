@@ -14,13 +14,15 @@ import { Input } from '@/components/ui/input';
 import { BLOOD_TYPES } from '../_utils/utils';
 import { CustomSelect } from '@/components/ui/custom-select';
 import { TEmployee } from '../_utils/types';
+import { Option } from '@/index';
 
 interface OtherDetailsProps {
   form: UseFormReturn<TEmployee>;
   isPending: boolean;
+  counties: Option[];
 }
 
-function OtherDetails({ form, isPending }: OtherDetailsProps) {
+function OtherDetails({ form, isPending, counties }: OtherDetailsProps) {
   const [fieldStatus, setFieldStatus] = useState({
     hasConviction: false,
     hasAllergy: false,
@@ -28,6 +30,44 @@ function OtherDetails({ form, isPending }: OtherDetailsProps) {
   });
   return (
     <div className="grid grid-cols-12 gap-4">
+      <FormField
+        control={form.control}
+        name="countyId"
+        render={({ field }) => (
+          <FormItem className="col-span-12 md:col-span-6">
+            <FormLabel>County</FormLabel>
+            <FormControl>
+              <CustomSelect
+                className="w-full"
+                options={counties}
+                onChange={field.onChange}
+                defaultValue={form.getValues('countyId')}
+                placeholder=""
+                disabled={isPending}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="estate"
+        render={({ field }) => (
+          <FormItem className="col-span-12 md:col-span-6">
+            <FormLabel>Estate</FormLabel>
+            <FormControl>
+              <Input
+                {...field}
+                placeholder="estate you live"
+                disabled={isPending}
+                className="uppercase"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
       <div className="col-span-12 md:col-span-6 flex flex-col gap-2">
         <FormField
           control={form.control}
@@ -79,6 +119,7 @@ function OtherDetails({ form, isPending }: OtherDetailsProps) {
                   {...field}
                   placeholder="conviction details"
                   disabled={!fieldStatus.hasConviction || isPending}
+                  className="uppercase"
                 />
               </FormControl>
               <FormMessage />
@@ -137,6 +178,7 @@ function OtherDetails({ form, isPending }: OtherDetailsProps) {
                   {...field}
                   placeholder="allergy details"
                   disabled={!fieldStatus.hasAllergy || isPending}
+                  className="uppercase"
                 />
               </FormControl>
               <FormMessage />
@@ -195,6 +237,7 @@ function OtherDetails({ form, isPending }: OtherDetailsProps) {
                   {...field}
                   placeholder="illness details"
                   disabled={!fieldStatus.hasIllness || isPending}
+                  className="uppercase"
                 />
               </FormControl>
               <FormMessage />
