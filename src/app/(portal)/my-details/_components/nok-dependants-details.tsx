@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, ChangeEvent } from 'react';
 import { createId } from '@paralleldrive/cuid2';
 import { UseFormReturn } from 'react-hook-form';
 import { format } from 'date-fns';
@@ -26,9 +26,35 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
     childName: child.childName,
     dob: format(child.dob, 'yyyy-MM-dd'),
   }));
+
   const [childDetails, setChildDetails] = useState<
     { id: string; childName: string; dob: string }[]
   >(children || []);
+
+  function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
+    const id = e.target.dataset.key;
+    setChildDetails(prev => {
+      const cloned = [...prev];
+      const index = cloned.findIndex(elm => elm.id === id);
+      if (e.target.id === 'childName') {
+        cloned[index].childName = e.target.value;
+      } else if (e.target.id === 'childDob') {
+        cloned[index].dob = e.target.value;
+      }
+
+      return cloned;
+    });
+  }
+
+  function handleOnBlur(e: React.FocusEvent<HTMLInputElement, Element>) {
+    form.setValue(
+      'children',
+      childDetails.map(child => ({
+        childName: child.childName,
+        dob: new Date(child.dob),
+      }))
+    );
+  }
 
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -196,16 +222,26 @@ function NokDependantsDetails({ form }: NokDependantsDetailsProps) {
               <FormLabel>Child Name</FormLabel>
               <FormControl>
                 <Input
-                  value={detail.childName}
-                  onChange={() => {}}
+                  value={detail.childName ?? ''}
+                  onChange={handleOnChange}
+                  onBlur={handleOnBlur}
                   className="uppercase"
+                  id="childName"
+                  data-key={detail.id}
                 />
               </FormControl>
             </FormItem>
-            <FormItem key={detail.childName} className="col-span-6">
+            <FormItem className="col-span-6">
               <FormLabel>Child Name</FormLabel>
               <FormControl>
-                <Input type="date" value={detail.dob} onChange={() => {}} />
+                <Input
+                  type="date"
+                  value={detail.dob ?? ''}
+                  onChange={handleOnChange}
+                  onBlur={handleOnBlur}
+                  id="childDob"
+                  data-key={detail.id}
+                />
               </FormControl>
             </FormItem>
           </Fragment>
