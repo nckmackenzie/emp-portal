@@ -51,6 +51,7 @@ function PersonalInformation({ form }: PersonalInformationProps) {
           }}
           onClientUploadComplete={res => {
             setUploadedImage(res[0].url);
+            form.setValue('image', res[0].url);
           }}
         />
       </div>
