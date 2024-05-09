@@ -2,6 +2,14 @@ import { cache } from 'react';
 
 import db from '@/lib/database/db';
 
+export const getCounties = cache(async () => {
+  const counties = await db.query.counties.findMany();
+  return counties.map(county => ({
+    value: county.id.toString(),
+    label: county.county,
+  }));
+});
+
 export const getEmployeeDetails = cache(async (userId: number) => {
   return await db.query.employees.findFirst({
     columns: {
