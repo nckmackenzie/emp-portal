@@ -25,7 +25,7 @@ function StatutoryDetails({ form }: StatutoryDetailsProps) {
               KRA PIN <sup className="text-destructive">*</sup>{' '}
             </FormLabel>
             <FormControl>
-              <Input {...field} maxLength={11} />
+              <Input {...field} maxLength={11} className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -40,7 +40,7 @@ function StatutoryDetails({ form }: StatutoryDetailsProps) {
               NHIF No <sup className="text-destructive">*</sup>
             </FormLabel>
             <FormControl>
-              <Input {...field} />
+              <Input {...field} className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -55,7 +55,7 @@ function StatutoryDetails({ form }: StatutoryDetailsProps) {
               NSSF No <sup className="text-destructive">*</sup>
             </FormLabel>
             <FormControl>
-              <Input {...field} />
+              <Input {...field} className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>
