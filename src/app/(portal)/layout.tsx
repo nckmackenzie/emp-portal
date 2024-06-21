@@ -7,13 +7,13 @@ export default function PortalLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-full ">
-      <Header />
-      <main className="h-[calc(100%-4rem)] ">
-        <ScrollArea className="container h-full">
-          <div className="py-4 md:py-6">{children}</div>
-        </ScrollArea>
-      </main>
-    </div>
+    // <div className="h-full ">
+    //   <Header />
+    //   <main className="h-[calc(100%-4rem)] ">
+    //     <ScrollArea className="container h-full">
+    //       <div className="py-4 md:py-6">{children}</div>
+    //     </ScrollArea>
+    //   </main>
+    // </div>
   );
 }
