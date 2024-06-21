@@ -101,7 +101,7 @@ function DetailsForms({ data, nok, kids, counties }: DetailsFormsProps) {
 
   function onSubmit(values: TEmployee) {
     setError(undefined);
-    console.log(values);
+    // console.log(values);
     startTransition(() => {
       updateDetails(values)
         .then(res => {

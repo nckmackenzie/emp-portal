@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import LeaveApplicationForm from './_components/leave-application-form';
 import { getLeaveNo, getLeaveTypes } from './_services';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Leave application',
@@ -31,10 +32,12 @@ export default async function LeaveApplicationPage() {
         </CardDescription>
       </CardHeader>
       <CardContent className="p-2 md:p-4">
-        <LeaveApplicationForm
-          leaveNo={leaveNo}
-          leaveTypes={convertedLeaveTypes}
-        />
+        <Suspense>
+          <LeaveApplicationForm
+            leaveNo={leaveNo}
+            leaveTypes={convertedLeaveTypes}
+          />
+        </Suspense>
       </CardContent>
     </Card>
   );

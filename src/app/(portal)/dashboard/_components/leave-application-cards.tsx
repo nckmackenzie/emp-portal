@@ -17,19 +17,19 @@ export default function LeaveApplicationCards({
             <div className="font-semibold grid grid-cols-2">
               Applied Date:{' '}
               <span className="font-normal">
-                {format(leave.applicationDate, 'PPP')}
+                {format(new Date(leave.applicationDate), 'PPP')}
               </span>
             </div>
             <div className="font-semibold grid grid-cols-2">
               From Date:{' '}
               <span className="font-normal">
-                {format(leave.startDate, 'PPP')}
+                {format(new Date(leave.startDate), 'PPP')}
               </span>
             </div>
             <div className="font-semibold grid grid-cols-2">
               To Date:{' '}
               <span className="font-normal">
-                {format(leave.endDate, 'PPP')}
+                {format(new Date(leave.endDate), 'PPP')}
               </span>
             </div>
             <div className="font-semibold grid grid-cols-2">
