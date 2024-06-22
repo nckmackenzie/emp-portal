@@ -12,7 +12,7 @@ interface DashboardCardProps {
 
 function DashboardCard({ label, value, href, Icon }: DashboardCardProps) {
   return (
-    <Card className="rounded-xl bg-neutral border-none flex justify-center">
+    <Card className="rounded-xl border-none flex justify-center">
       <CardContent className="p-4 flex flex-col space-y-3">
         <div className="text-muted-foreground text-sm flex items-center gap-2">
           <Icon className="icon" />
