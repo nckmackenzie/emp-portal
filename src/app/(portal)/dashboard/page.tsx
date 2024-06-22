@@ -12,6 +12,7 @@ import DashboardCards from './_components/dashboard-cards';
 import LeaveApplications, {
   LeaveTableSkeleton,
 } from './_components/leave-applications';
+import { ContentLayout } from '@/components/layout/content-layout';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -19,19 +20,21 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
-      <DashboardCards />
-      <Card>
-        <CardHeader>
-          <CardTitle>Leaves applied.</CardTitle>
-          <CardDescription>List of all days applied.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<LeaveTableSkeleton />}>
-            <LeaveApplications />
-          </Suspense>
-        </CardContent>
-      </Card>
-    </div>
+    <ContentLayout title="Dashboard">
+      <div className="space-y-8">
+        <DashboardCards />
+        <Card>
+          <CardHeader>
+            <CardTitle>Leaves applied.</CardTitle>
+            <CardDescription>List of all days applied.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Suspense fallback={<LeaveTableSkeleton />}>
+              <LeaveApplications />
+            </Suspense>
+          </CardContent>
+        </Card>
+      </div>
+    </ContentLayout>
   );
 }
