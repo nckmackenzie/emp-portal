@@ -9,6 +9,7 @@ import {
 } from './_services';
 import DetailsForms from './_components/details-form';
 import { validateRequest } from '../../../../auth';
+import { ContentLayout } from '@/components/layout/content-layout';
 
 export const metadata: Metadata = {
   title: 'My details',
@@ -24,11 +25,13 @@ export default async function MyDetailsPage() {
   const counties = await getCounties();
 
   return (
-    <DetailsForms
-      data={info}
-      nok={nextOfKin}
-      kids={children}
-      counties={counties}
-    />
+    <ContentLayout title="My details">
+      <DetailsForms
+        data={info}
+        nok={nextOfKin}
+        kids={children}
+        counties={counties}
+      />
+    </ContentLayout>
   );
 }
