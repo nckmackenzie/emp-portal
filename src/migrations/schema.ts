@@ -70,6 +70,8 @@ export const stockMovementTypeEnum = pgEnum('stockMovementTypeEnum', [
   'GRN',
 ]);
 export const employeeCategory = pgEnum('employeeCategory', [
+  'CONTRACTOR',
+  'WORKFLOOR',
   'NON-UNIONISABLE',
   'MANAGEMENT',
   'UNIONISABLE',
@@ -100,6 +102,61 @@ export const leaveStatusEnum = pgEnum('leaveStatusEnum', [
   'APPROVED',
   'PENDING',
 ]);
+export const appraisalStatusEnum = pgEnum('appraisalStatusEnum', [
+  'FILLED',
+  'COMPLETED',
+  'CONDUCTED',
+  'STAFF FILLED',
+  'PENDING',
+  'NOT SET',
+]);
+export const disciplinaryCaseActionEnum = pgEnum('disciplinaryCaseActionEnum', [
+  'OTHER',
+  'TERMINATION',
+  'SUSPENSION',
+  'SURCHARGE',
+  'WRITTEN-WARNING',
+  'VERBAL-WARNING',
+]);
+export const disciplinaryCaseStatusEnum = pgEnum('disciplinaryCaseStatusEnum', [
+  'CLOSED',
+  'RESOLVED',
+  'UNDER-INVESTIGATION',
+  'REPORTED',
+]);
+export const healthSafetyInjuryEnum = pgEnum('healthSafetyInjuryEnum', [
+  'MAJOR',
+  'MINOR',
+  'CLOSED',
+  'REJECTED',
+  'PENDING',
+  'NOT-FILED',
+]);
+export const healthSafetyStatusEnum = pgEnum('healthSafetyStatusEnum', [
+  'CLOSED',
+  'REJECTED',
+  'PENDING',
+  'NOT-FILED',
+]);
+export const educationLevelEnum = pgEnum('educationLevelEnum', [
+  'NONE',
+  'PRIMARY',
+  'SECONDARY',
+  'CERTIFICATE',
+  'DIPLOMA',
+  'HIGHER-DIPLOMA',
+  'BACHELORS-DEGREE',
+  'MASTERS-DEGREE',
+  'PHD',
+]);
+export const educationTypeEnum = pgEnum('educationTypeEnum', [
+  'professional',
+  'academic',
+]);
+export const workfloorType = pgEnum('workfloorType', [
+  'NON-UNIONISABLE',
+  'UNIONISABLE',
+]);
 
 export const forms = pgTable('forms', {
   id: serial('id').primaryKey().notNull(),
@@ -117,7 +174,7 @@ export const session = pgTable('session', {
     .references(() => users.id, { onDelete: 'cascade' }),
   expiresAt: timestamp('expires_at', {
     withTimezone: true,
-    mode: 'date',
+    mode: 'string',
   }).notNull(),
 });
 
@@ -402,20 +459,24 @@ export const tempDebtors = pgTable(
   }
 );
 
-export const employeesOtherdetails = pgTable('employees_otherdetails', {
+export const employeesContacts = pgTable('employees_contacts', {
   employeeId: integer('employee_id')
     .notNull()
     .references(() => employees.id, { onDelete: 'cascade' }),
-  nhif: varchar('nhif'),
-  nssf: varchar('nssf'),
-  kraPin: varchar('kra_pin'),
-  allergies: boolean('allergies').default(false).notNull(),
-  allegryDescription: varchar('allegry_description'),
-  illness: boolean('illness').default(false).notNull(),
-  illnessDescription: varchar('illness_description'),
-  conviction: boolean('conviction').default(false).notNull(),
-  convictionDescription: varchar('conviction_description'),
-  bloodType: bloodTypeEnum('blood_type'),
+  primaryContact: varchar('primary_contact', { length: 15 }),
+  alternativeContact: varchar('alternative_contact'),
+  address: varchar('address'),
+  postalCode: varchar('postal_code', { length: 5 }),
+  estate: varchar('estate'),
+  street: varchar('street'),
+  countyId: integer('county_id').references(() => counties.id, {
+    onDelete: 'restrict',
+  }),
+  district: varchar('district'),
+  location: varchar('location'),
+  village: varchar('village'),
+  emailAddress: varchar('email_address', { length: 255 }),
+  passport: varchar('passport'),
 });
 
 export const designations = pgTable('designations', {
@@ -464,6 +525,9 @@ export const employees = pgTable(
     imageUrl: text('image_url'),
     remarks: text('remarks'),
     isNew: boolean('is_new').default(true).notNull(),
+    nationality: varchar('nationality', { length: 100 }),
+    ethnicity: varchar('ethnicity', { length: 100 }),
+    workfloorType: workfloorType('workfloor_type'),
   },
   table => {
     return {
@@ -474,25 +538,6 @@ export const employees = pgTable(
     };
   }
 );
-
-export const employeesContacts = pgTable('employees_contacts', {
-  employeeId: integer('employee_id')
-    .notNull()
-    .references(() => employees.id, { onDelete: 'cascade' }),
-  primaryContact: varchar('primary_contact', { length: 15 }),
-  alternativeContact: varchar('alternative_contact'),
-  address: varchar('address'),
-  postalCode: varchar('postal_code', { length: 5 }),
-  estate: varchar('estate'),
-  street: varchar('street'),
-  countyId: integer('county_id').references(() => counties.id, {
-    onDelete: 'restrict',
-  }),
-  district: varchar('district'),
-  location: varchar('location'),
-  village: varchar('village'),
-  emailAddress: varchar('email_address', { length: 255 }),
-});
 
 export const employeesNoks = pgTable('employees_noks', {
   employeeId: integer('employee_id')
@@ -531,6 +576,23 @@ export const products = pgTable(
     };
   }
 );
+
+export const employeesOtherdetails = pgTable('employees_otherdetails', {
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  nhif: varchar('nhif'),
+  nssf: varchar('nssf'),
+  kraPin: varchar('kra_pin'),
+  allergies: boolean('allergies').default(false).notNull(),
+  allegryDescription: varchar('allegry_description'),
+  illness: boolean('illness').default(false).notNull(),
+  illnessDescription: varchar('illness_description'),
+  conviction: boolean('conviction').default(false).notNull(),
+  convictionDescription: varchar('conviction_description'),
+  bloodType: bloodTypeEnum('blood_type'),
+  educationLevel: educationLevelEnum('education_level'),
+});
 
 export const ordersDetails = pgTable('orders_details', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
@@ -609,6 +671,21 @@ export const employeeUsers = pgTable(
   }
 );
 
+export const contractExtensions = pgTable('contract_extensions', {
+  id: text('id').primaryKey().notNull(),
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id),
+  oldExpiryDate: date('old_expiry_date').notNull(),
+  extensionDuration: numeric('extension_duration').notNull(),
+  newExpiryDate: date('new_expiry_date').notNull(),
+  remarks: text('remarks'),
+  createdBy: uuid('created_by')
+    .notNull()
+    .references(() => users.id),
+  createdDate: date('created_date').defaultNow().notNull(),
+});
+
 export const leaveTypes = pgTable('leave_types', {
   id: integer('id').primaryKey().notNull(),
   leaveTypeName: varchar('leave_type_name').notNull(),
@@ -641,6 +718,149 @@ export const leaveApplications = pgTable('leave_applications', {
   attachmentUrl: text('attachment_url'),
 });
 
+export const kpis = pgTable('kpis', {
+  id: text('id').primaryKey().notNull(),
+  kpi: text('kpi').notNull(),
+  designationId: integer('designation_id').references(() => designations.id),
+});
+
+export const calendarYears = pgTable('calendar_years', {
+  id: integer('id').primaryKey().notNull(),
+  yearName: varchar('year_name', { length: 20 }).notNull(),
+});
+
+export const staffObjectivesDetails = pgTable('staff_objectives_details', {
+  id: text('id').primaryKey().notNull(),
+  headerId: integer('header_id')
+    .notNull()
+    .references(() => staffObjectivesHeader.id),
+  kpiId: text('kpi_id')
+    .notNull()
+    .references(() => kpis.id),
+  objective: text('objective').notNull(),
+});
+
+export const staffObjectivesHeader = pgTable('staff_objectives_header', {
+  id: serial('id').primaryKey().notNull(),
+  staffId: integer('staff_id')
+    .notNull()
+    .references(() => employees.id),
+  yearId: integer('year_id')
+    .notNull()
+    .references(() => calendarYears.id),
+});
+
+export const appraisalHeader = pgTable('appraisal_header', {
+  id: serial('id').primaryKey().notNull(),
+  appraisalDate: date('appraisal_date').notNull(),
+  staffId: integer('staff_id')
+    .notNull()
+    .references(() => employees.id),
+  yearId: integer('year_id')
+    .notNull()
+    .references(() => calendarYears.id),
+  appraisalStatus: appraisalStatusEnum('appraisal_status')
+    .default('PENDING')
+    .notNull(),
+  conductedOn: date('conducted_on'),
+  createdOn: date('created_on').defaultNow().notNull(),
+  createdBy: uuid('created_by')
+    .notNull()
+    .references(() => users.id),
+  isDeleted: boolean('is_deleted').default(false).notNull(),
+  startTime: varchar('start_time').notNull(),
+  endTime: varchar('end_time').notNull(),
+  remarks: text('remarks').notNull(),
+});
+
+export const disciplinaryCases = pgTable('disciplinary_cases', {
+  id: text('id').primaryKey().notNull(),
+  caseDate: date('case_date').notNull(),
+  incidenceDescription: text('incidence_description').notNull(),
+  remarks: text('remarks').notNull(),
+  caseStatus: disciplinaryCaseStatusEnum('case_status')
+    .default('REPORTED')
+    .notNull(),
+  caseAction: disciplinaryCaseActionEnum('case_action').notNull(),
+  otherAction: varchar('other_action'),
+  isDeleted: boolean('is_deleted').default(false).notNull(),
+});
+
+export const employeeCertifications = pgTable('employee_certifications', {
+  id: serial('id').primaryKey().notNull(),
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id),
+  certification: varchar('certification').notNull(),
+  score: varchar('score').notNull(),
+});
+
+export const healthSafety = pgTable('health_safety', {
+  id: text('id').primaryKey().notNull(),
+  incidenceDate: date('incidence_date').notNull(),
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id),
+  departmentId: integer('department_id')
+    .notNull()
+    .references(() => departments.id),
+  incedenceDescription: text('incedence_description').notNull(),
+  injurySeverity: healthSafetyInjuryEnum('injury_severity').notNull(),
+  applicationStatus: healthSafetyStatusEnum('application_status')
+    .default('NOT-FILED')
+    .notNull(),
+  applicationDate: date('application_date'),
+  resolutionDate: date('resolution_date'),
+  amountAwarded: numeric('amount_awarded'),
+});
+
+export const employeeTerminations = pgTable('employee_terminations', {
+  id: text('id').primaryKey().notNull(),
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id),
+  terminationDate: date('termination_date').notNull(),
+  reason: text('reason').notNull(),
+  remarks: text('remarks'),
+});
+
+export const employeeQualifications = pgTable('employee_qualifications', {
+  id: text('id').primaryKey().notNull(),
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id),
+  qualificationType: educationTypeEnum('qualification_type').notNull(),
+  from: varchar('from'),
+  to: varchar('to'),
+  school: varchar('school'),
+  attainment: varchar('attainment'),
+  specialization: varchar('specialization'),
+});
+
+export const loanDeductions = pgTable('loan_deductions', {
+  id: serial('id').primaryKey().notNull(),
+  loanId: integer('loan_id').references(() => staffLoans.id),
+  deductionAmount: numeric('deduction_amount').notNull(),
+  deductionDate: date('deduction_date').notNull(),
+  remarks: text('remarks'),
+  createdBy: uuid('created_by')
+    .notNull()
+    .references(() => users.id),
+  createdDate: date('created_date').defaultNow().notNull(),
+});
+
+export const staffLoans = pgTable('staff_loans', {
+  id: serial('id').primaryKey().notNull(),
+  loanDate: date('loan_date').notNull(),
+  employeeId: integer('employee_id').references(() => employees.id),
+  loanAmount: numeric('loan_amount').notNull(),
+  loanDuration: integer('loan_duration').notNull(),
+  deductableAmount: numeric('deductable_amount').default('0').notNull(),
+  reason: text('reason'),
+  attachment: text('attachment'),
+  completed: boolean('completed').default(false).notNull(),
+});
+
 export const userRoles = pgTable(
   'user_roles',
   {
@@ -656,6 +876,62 @@ export const userRoles = pgTable(
       userRolesRoleIdUserIdPk: primaryKey({
         columns: [table.userId, table.roleId],
         name: 'user_roles_role_id_user_id_pk',
+      }),
+    };
+  }
+);
+
+export const disciplinaryCasesDocuments = pgTable(
+  'disciplinary_cases_documents',
+  {
+    caseId: text('case_id')
+      .notNull()
+      .references(() => disciplinaryCases.id),
+    uploadedUrl: text('uploaded_url').notNull(),
+  },
+  table => {
+    return {
+      disciplinaryCasesDocumentsCaseIdUploadedUrlPk: primaryKey({
+        columns: [table.caseId, table.uploadedUrl],
+        name: 'disciplinary_cases_documents_case_id_uploaded_url_pk',
+      }),
+    };
+  }
+);
+
+export const disciplinaryCasesPersonnel = pgTable(
+  'disciplinary_cases_personnel',
+  {
+    staffId: integer('staff_id')
+      .notNull()
+      .references(() => employees.id),
+    caseId: text('case_id')
+      .notNull()
+      .references(() => disciplinaryCases.id),
+  },
+  table => {
+    return {
+      disciplinaryCasesPersonnelCaseIdStaffIdPk: primaryKey({
+        columns: [table.staffId, table.caseId],
+        name: 'disciplinary_cases_personnel_case_id_staff_id_pk',
+      }),
+    };
+  }
+);
+
+export const healthSafetyDocuments = pgTable(
+  'health_safety_documents',
+  {
+    caseId: text('case_id')
+      .notNull()
+      .references(() => healthSafety.id),
+    uploadedUrl: text('uploaded_url').notNull(),
+  },
+  table => {
+    return {
+      healthSafetyDocumentsCaseIdUploadedUrlPk: primaryKey({
+        columns: [table.caseId, table.uploadedUrl],
+        name: 'health_safety_documents_case_id_uploaded_url_pk',
       }),
     };
   }
@@ -710,10 +986,43 @@ export const employeeRelations = relations(employees, ({ one, many }) => ({
     fields: [employees.id],
     references: [employeesContacts.employeeId],
   }),
-  nok: one(employeesNoks),
+  nok: one(employeesNoks, {
+    fields: [employees.id],
+    references: [employeesNoks.employeeId],
+  }),
   otherDetails: one(employeesOtherdetails, {
     fields: [employees.id],
     references: [employeesOtherdetails.employeeId],
   }),
   children: many(employeesChildren),
+  qualifications: many(employeeQualifications),
+  department: one(departments, {
+    fields: [employees.department],
+    references: [departments.id],
+  }),
+  designation: one(designations, {
+    fields: [employees.designation],
+    references: [designations.id],
+  }),
+  contracts: many(contractExtensions),
 }));
+
+export const employeeChildrenRelations = relations(
+  employeesChildren,
+  ({ one }) => ({
+    employee: one(employees, {
+      fields: [employeesChildren.employeeId],
+      references: [employees.id],
+    }),
+  })
+);
+
+export const employeeQualificationsRelations = relations(
+  employeeQualifications,
+  ({ one }) => ({
+    employee: one(employees, {
+      fields: [employeeQualifications.employeeId],
+      references: [employees.id],
+    }),
+  })
+);
