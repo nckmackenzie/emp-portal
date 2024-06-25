@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import db from '@/lib/database/db';
 import { formatStringForDb } from '@/lib/formatters';
 import {
+  employeeQualifications,
   employees,
   employeesChildren,
   employeesContacts,
@@ -58,6 +59,10 @@ export const updateDetails = async (values: TEmployee) => {
     postalCode,
     countyId,
     estate,
+    ethnicity,
+    education,
+    nationality,
+    passport,
   } = validated.data;
 
   const dbIdNo = await db.query.employees.findFirst({
@@ -105,6 +110,8 @@ export const updateDetails = async (values: TEmployee) => {
         maritalStatus,
         spouseName: formatStringForDb(spouseName),
         spouseContact: formatStringForDb(spouseContact),
+        nationality: formatStringForDb(nationality),
+        ethnicity: formatStringForDb(ethnicity),
       })
       .where(eq(employees.id, user.employeeRefId))
       .returning();
@@ -119,6 +126,7 @@ export const updateDetails = async (values: TEmployee) => {
         postalCode: formatStringForDb(postalCode),
         countyId: countyId ? +countyId : null,
         estate: formatStringForDb(estate),
+        passport: formatStringForDb(passport),
       })
       .where(eq(employeesContacts.employeeId, user.employeeRefId))
       .returning();
@@ -177,12 +185,33 @@ export const updateDetails = async (values: TEmployee) => {
       });
     });
 
+    let returnedEducation = true;
+    if (education && education.length > 0) {
+      const formattedEducation = education.map(education => ({
+        id: education.id,
+        employeeId: user.employeeRefId,
+        qualificationType: education.type,
+        from: education.from,
+        to: education.to,
+        school: education.school,
+        attainment: education.attainment,
+        specialization: education.specialization,
+      }));
+      const returned = await tx
+        .insert(employeeQualifications)
+        .values(formattedEducation)
+        .returning({ id: employeeQualifications.id });
+
+      returnedEducation = !!returned.length;
+    }
+
     return (
       //   !!returnedChildren.length &&
       !!updatedOther.length &&
       !!updatedNok.length &&
       !!updatedContacts.length &&
-      !!returned
+      !!returned &&
+      !!returnedEducation
     );
   });
 

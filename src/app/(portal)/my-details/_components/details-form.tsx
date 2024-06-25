@@ -28,11 +28,13 @@ import {
   TFetchedEmployeeNok,
   TFetchedEmployeeChildren,
   MaritalStatus,
+  EducationDetail,
 } from '../_utils/types';
 import { EMPLOYEE_TABS } from '../_utils/utils';
 import { employeeSchema } from '../_utils/schema';
 import { updateDetails } from '../_actions';
 import { Option } from '@/index';
+import EducationDetails from './education-details';
 
 interface DetailsFormsProps {
   data: TFetchedEmployee;
@@ -43,6 +45,9 @@ interface DetailsFormsProps {
 
 function DetailsForms({ data, nok, kids, counties }: DetailsFormsProps) {
   const [isPending, startTransition] = useTransition();
+  const [educationDetails, setEducationDetails] = useState<EducationDetail[]>(
+    []
+  );
   const formattedChildren = kids.map(kid => ({
     childName: kid.childname!,
     dob: new Date(kid.dob!),
@@ -82,6 +87,19 @@ function DetailsForms({ data, nok, kids, counties }: DetailsFormsProps) {
       bloodType: data?.otherDetails.bloodType ?? undefined,
       countyId: data?.contact?.countyId?.toString() || '',
       estate: data?.contact?.estate || '',
+      ethnicity: data?.ethnicity || '',
+      nationality: data?.nationality || '',
+      education: data?.qualifications
+        ? data.qualifications.map(qualification => ({
+            id: qualification.id,
+            type: qualification.qualificationType,
+            from: qualification.from ?? '',
+            to: qualification.to ?? '',
+            school: qualification.school ?? '',
+            attainment: qualification.attainment ?? '',
+            specialization: qualification.specialization ?? '',
+          }))
+        : [],
     },
     resolver: zodResolver(employeeSchema),
   });
@@ -155,6 +173,14 @@ function DetailsForms({ data, nok, kids, counties }: DetailsFormsProps) {
                   </TabPanel>
                   <TabPanel>
                     <NokDependantsDetails form={form} />
+                  </TabPanel>
+                  <TabPanel>
+                    <EducationDetails
+                      form={form}
+                      isPending={isPending}
+                      education={educationDetails}
+                      onSetEducation={setEducationDetails}
+                    />
                   </TabPanel>
                   <TabPanel>
                     <OtherDetails
