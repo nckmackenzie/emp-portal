@@ -244,6 +244,32 @@ function PersonalInformation({ form }: PersonalInformationProps) {
           </FormItem>
         )}
       />
+      <FormField
+        control={form.control}
+        name="nationality"
+        render={({ field }) => (
+          <FormItem className="col-span-12 md:col-span-6">
+            <FormLabel>Nationality</FormLabel>
+            <FormControl>
+              <Input type="text" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="ethnicity"
+        render={({ field }) => (
+          <FormItem className="col-span-12 md:col-span-6">
+            <FormLabel>Ethnicity</FormLabel>
+            <FormControl>
+              <Input type="text" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }
