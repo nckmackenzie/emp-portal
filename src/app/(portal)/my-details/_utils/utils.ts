@@ -2,6 +2,7 @@ export const EMPLOYEE_TABS = [
   'Personal Information',
   'Statutory Details',
   'NOK/Dependants',
+  'Education Details',
   'Other details',
 ];
 
