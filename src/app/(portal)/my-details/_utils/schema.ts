@@ -17,6 +17,9 @@ export const employeeSchema = z
       .enum(['SINGLE', 'MARRIED', 'DIVORCED', 'WIDOWED'])
       .optional(),
     idNo: z.string({ required_error: 'ID Number is required.' }),
+    passport: z.string().optional(),
+    nationality: z.string().optional(),
+    ethnicity: z.string().optional(),
     image: z.string().optional(),
     alternativeContact: z.string().optional(),
     postalAddress: z.string().optional(),
@@ -57,6 +60,19 @@ export const employeeSchema = z
     conviction: z.boolean().optional(),
     convictionDescription: z.string().optional(),
     bloodType: z.enum(['A', 'B', 'AB', 'O']).optional(),
+    education: z
+      .array(
+        z.object({
+          id: z.string(),
+          type: z.enum(['academic', 'professional']),
+          from: z.string(),
+          to: z.string(),
+          school: z.string(),
+          attainment: z.string(),
+          specialization: z.string(),
+        })
+      )
+      .optional(),
   })
   .superRefine(({ kraPin }, ctx) => {
     if (kraPin.trim().length > 0 && kraPin.trim().length !== 11) {
