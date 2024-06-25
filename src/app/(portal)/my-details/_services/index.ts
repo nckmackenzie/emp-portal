@@ -22,11 +22,14 @@ export const getEmployeeDetails = cache(async (userId: number) => {
       maritalStatus: true,
       spouseContact: true,
       spouseName: true,
+      ethnicity: true,
+      nationality: true,
     },
     where: (model, { eq }) => eq(model.id, userId),
     with: {
       contact: true,
       otherDetails: true,
+      qualifications: true,
     },
   });
 });
