@@ -639,7 +639,7 @@ export const employeeSession = pgTable('employee_session', {
     .references(() => employeeUsers.id, { onDelete: 'cascade' }),
   expiresAt: timestamp('expires_at', {
     withTimezone: true,
-    mode: 'string',
+    mode: 'date',
   }).notNull(),
 });
 
@@ -846,21 +846,6 @@ export const employeeQualifications = pgTable('employee_qualifications', {
   specialization: varchar('specialization'),
 });
 
-export const staffLoans = pgTable('staff_loans', {
-  id: serial('id').primaryKey().notNull(),
-  loanDate: date('loan_date').notNull(),
-  employeeId: integer('employee_id').references(() => employees.id),
-  loanAmount: numeric('loan_amount').notNull(),
-  loanDuration: integer('loan_duration').notNull(),
-  deductableAmount: numeric('deductable_amount').default('0').notNull(),
-  reason: text('reason'),
-  attachment: text('attachment'),
-  completed: boolean('completed').default(false).notNull(),
-  approvedAmount: numeric('approved_amount').default('0').notNull(),
-  approvalDate: date('approval_date'),
-  monthySalary: numeric('monthy_salary'),
-});
-
 export const loanDeductions = pgTable('loan_deductions', {
   id: serial('id').primaryKey().notNull(),
   loanId: integer('loan_id').references(() => staffLoans.id),
@@ -882,6 +867,23 @@ export const previousLostHours = pgTable('previous_lost_hours', {
   lateness: numeric('lateness'),
   earlyExit: numeric('early_exit'),
   remarks: text('remarks'),
+});
+
+export const staffLoans = pgTable('staff_loans', {
+  id: serial('id').primaryKey().notNull(),
+  loanDate: date('loan_date').notNull(),
+  employeeId: integer('employee_id').references(() => employees.id),
+  loanAmount: numeric('loan_amount').notNull(),
+  loanDuration: integer('loan_duration').notNull(),
+  deductableAmount: numeric('deductable_amount').default('0').notNull(),
+  reason: text('reason'),
+  attachment: text('attachment'),
+  completed: boolean('completed').default(false).notNull(),
+  approvedAmount: numeric('approved_amount').default('0').notNull(),
+  approvalDate: date('approval_date'),
+  monthySalary: numeric('monthy_salary'),
+  loanType: varchar('loan_type').default('existing'),
+  loanStatus: leaveStatusEnum('loan_status').default('PENDING').notNull(),
 });
 
 export const userRoles = pgTable(
