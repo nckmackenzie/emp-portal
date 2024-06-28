@@ -251,7 +251,7 @@ function PersonalInformation({ form }: PersonalInformationProps) {
           <FormItem className="col-span-12 md:col-span-6">
             <FormLabel>Nationality</FormLabel>
             <FormControl>
-              <Input type="text" {...field} />
+              <Input type="text" {...field} className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -264,7 +264,7 @@ function PersonalInformation({ form }: PersonalInformationProps) {
           <FormItem className="col-span-12 md:col-span-6">
             <FormLabel>Ethnicity</FormLabel>
             <FormControl>
-              <Input type="text" {...field} />
+              <Input type="text" {...field} className="uppercase" />
             </FormControl>
             <FormMessage />
           </FormItem>
