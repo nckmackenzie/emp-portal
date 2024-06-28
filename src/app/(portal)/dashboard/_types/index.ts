@@ -1,4 +1,4 @@
-import { getAppliedLeaves } from '../../leave-application/_services';
+import { getAppliedLeaves } from '../../leaves/leave-application/_services';
 
 export type TLeaveApplication = Awaited<
   ReturnType<typeof getAppliedLeaves>

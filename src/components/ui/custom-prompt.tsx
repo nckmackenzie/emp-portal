@@ -16,6 +16,7 @@ interface CustomPromptProps {
   promptDescription?: boolean;
   description?: string;
   onConfirm?: () => void;
+  isPending?: boolean;
 }
 
 export function CustomPrompt({
@@ -24,6 +25,7 @@ export function CustomPrompt({
   promptDescription,
   onConfirm,
   description,
+  isPending,
 }: CustomPromptProps) {
   function handleAction() {
     onConfirm && onConfirm();
@@ -34,7 +36,7 @@ export function CustomPrompt({
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
+          <AlertDialogTitle className="text-base">
             {prompt || 'Are you absolutely sure?'}
           </AlertDialogTitle>
           {promptDescription && (
@@ -45,8 +47,10 @@ export function CustomPrompt({
           )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleAction}>Continue</AlertDialogAction>
+          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleAction} disabled={isPending}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

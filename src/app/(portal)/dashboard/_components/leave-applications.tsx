@@ -10,7 +10,7 @@ import LeaveApplicationCards from './leave-application-cards';
 import LeaveAppliedTable from './leave-applied-table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { dummyArray } from '@/lib/utils';
-import { getAppliedLeaves } from '../../leave-application/_services';
+import { getAppliedLeaves } from '../../leaves/leave-application/_services';
 
 export default async function LeaveApplications() {
   const leaves = await getAppliedLeaves();

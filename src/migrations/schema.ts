@@ -98,6 +98,7 @@ export const maritalStatusEnum = pgEnum('maritalStatusEnum', [
 ]);
 export const bloodTypeEnum = pgEnum('bloodTypeEnum', ['O', 'AB', 'B', 'A']);
 export const leaveStatusEnum = pgEnum('leaveStatusEnum', [
+  'CANCELED',
   'REJECTED',
   'APPROVED',
   'PENDING',
@@ -999,7 +1000,6 @@ export const accounts = pgTable(
     };
   }
 );
-
 export const employeeRelations = relations(employees, ({ one, many }) => ({
   contact: one(employeesContacts, {
     fields: [employees.id],

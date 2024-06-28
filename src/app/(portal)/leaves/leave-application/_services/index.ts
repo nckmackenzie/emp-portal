@@ -2,6 +2,7 @@ import { cache } from 'react';
 
 import db from '@/lib/database/db';
 import { validateRequest } from '../../../../../../auth';
+import { checkUserAuth } from '@/lib/auth';
 
 export const getLeaveTypes = cache(async () => {
   return await db.query.leaveTypes.findMany({
@@ -33,6 +34,28 @@ export const getAppliedLeaves = cache(async () => {
     },
     where: (model, { eq, and }) =>
       and(eq(model.isDeleted, false), eq(model.employeeId, user.employeeRefId)),
+    orderBy: (model, { desc }) => [desc(model.applicationDate)],
+  });
+});
+
+export const getLeaves = cache(async (leaveType: string) => {
+  const user = await checkUserAuth();
+
+  return await db.query.leaveApplications.findMany({
+    columns: {
+      leaveNo: true,
+      startDate: true,
+      endDate: true,
+      daysTaken: true,
+      resumeDate: true,
+      leaveStatus: true,
+    },
+    where: (model, { eq, and }) =>
+      and(
+        eq(model.isDeleted, false),
+        eq(model.employeeId, user.employeeRefId),
+        eq(model.leaveTypeId, +leaveType)
+      ),
     orderBy: (model, { desc }) => [desc(model.applicationDate)],
   });
 });
