@@ -27,6 +27,7 @@ function OtherDetails({ form, isPending, counties }: OtherDetailsProps) {
     hasConviction: false,
     hasAllergy: false,
     hasIllness: false,
+    hasTermination: false,
   });
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -265,6 +266,86 @@ function OtherDetails({ form, isPending, counties }: OtherDetailsProps) {
           </FormItem>
         )}
       />
+      <div className="col-span-12 md:col-span-6 flex flex-col gap-2">
+        <FormField
+          control={form.control}
+          name="termination"
+          render={({ field }) => (
+            <FormItem className="col-span-6 flex items-center gap-4">
+              <FormLabel>
+                Have you been terminated/dismissed from employment
+              </FormLabel>
+              <FormControl>
+                <RadioGroup
+                  defaultValue={form.getValues('termination') ? 'yes' : 'no'}
+                  disabled={isPending}
+                  onValueChange={(value: string) => {
+                    field.onChange(value);
+                    if (value.trim().toLowerCase() === 'no') {
+                      form.setValue('terminationDetails', '');
+                    }
+                    setFieldStatus(prev => ({
+                      ...prev,
+                      hasTermination: value.trim().toLowerCase() === 'yes',
+                    }));
+                  }}
+                  className="flex items-center space-y-1 self-center"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="yes" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Yes</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="no" />
+                    </FormControl>
+                    <FormLabel className="font-normal">No</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex flex-col lg:flex-row gap-4">
+          <FormField
+            control={form.control}
+            name="terminationDetails"
+            render={({ field }) => (
+              <FormItem className="col-span-6">
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="termination details"
+                    disabled={!fieldStatus.hasTermination || isPending}
+                    className="uppercase"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="effectiveDate"
+            render={({ field }) => (
+              <FormItem className="col-span-6">
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="date"
+                    disabled={!fieldStatus.hasTermination || isPending}
+                    className="uppercase"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </div>
     </div>
   );
 }
