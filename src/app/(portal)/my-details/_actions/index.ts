@@ -63,6 +63,10 @@ export const updateDetails = async (values: TEmployee) => {
     education,
     nationality,
     passport,
+    educationLevel,
+    effectiveDate,
+    termination,
+    terminationDetails,
   } = validated.data;
 
   const dbIdNo = await db.query.employees.findFirst({
@@ -163,6 +167,12 @@ export const updateDetails = async (values: TEmployee) => {
           ? formatStringForDb(convictionDescription)
           : null,
         bloodType: bloodType ?? null,
+        educationLevel: educationLevel ?? null,
+        terminated: !!termination,
+        terminationDescription: formatStringForDb(terminationDetails),
+        effectiveDate: effectiveDate
+          ? format(new Date(effectiveDate), 'yyyy-MM-dd')
+          : null,
       })
       .where(eq(employeesOtherdetails.employeeId, user.employeeRefId))
       .returning();
