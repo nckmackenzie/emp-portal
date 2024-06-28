@@ -19,10 +19,17 @@ export default async function MyDetailsPage() {
   const { user } = await validateRequest();
   if (!user) redirect('/login');
 
-  const info = await getEmployeeDetails(user.employeeRefId);
-  const nextOfKin = await getEmployeeNok(user.employeeRefId);
-  const children = await getEmployeeChildren(user.employeeRefId);
-  const counties = await getCounties();
+  const [info, nextOfKin, children, counties] = await Promise.all([
+    getEmployeeDetails(user.employeeRefId),
+    getEmployeeNok(user.employeeRefId),
+    getEmployeeChildren(user.employeeRefId),
+    getCounties(),
+  ]);
+
+  // const info = await getEmployeeDetails(user.employeeRefId);
+  // const nextOfKin = await getEmployeeNok(user.employeeRefId);
+  // const children = await getEmployeeChildren(user.employeeRefId);
+  // const counties = await getCounties();
 
   return (
     <ContentLayout title="My details">
