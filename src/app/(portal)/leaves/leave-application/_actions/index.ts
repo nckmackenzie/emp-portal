@@ -9,6 +9,8 @@ import { TLeaveApplication } from '../_utils/types';
 import { calculateWorkingDays } from '../_utils/utils';
 import { leaveApplications } from '@/migrations/schema';
 import { formatDate, formatStringForDb } from '@/lib/formatters';
+import { checkUserAuth } from '@/lib/auth';
+import { eq } from 'drizzle-orm';
 
 export const createLeave = async (values: TLeaveApplication) => {
   const { user } = await validateRequest();
@@ -87,4 +89,22 @@ export const createLeave = async (values: TLeaveApplication) => {
   revalidatePath('/dashboard');
   revalidatePath('/leaves');
   return redirect('/leaves');
+};
+
+export const cancelLeave = async (leaveNo: number) => {
+  await checkUserAuth();
+
+  const returned = await db
+    .update(leaveApplications)
+    .set({ leaveStatus: 'CANCELED' })
+    .where(eq(leaveApplications.leaveNo, leaveNo))
+    .returning({ leaveNo: leaveApplications.leaveNo });
+
+  if (!returned.length)
+    return { error: 'Was unable to cancel this leave. Contact support.' };
+
+  revalidatePath('/dashboard');
+  revalidatePath('/leaves');
+
+  return { error: null };
 };
