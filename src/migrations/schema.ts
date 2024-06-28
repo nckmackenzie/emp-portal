@@ -150,6 +150,7 @@ export const educationLevelEnum = pgEnum('educationLevelEnum', [
   'PHD',
 ]);
 export const educationTypeEnum = pgEnum('educationTypeEnum', [
+  'training',
   'professional',
   'academic',
 ]);
@@ -493,6 +494,30 @@ export const employeesChildren = pgTable('employees_children', {
   dob: date('dob'),
 });
 
+export const employeesOtherdetails = pgTable('employees_otherdetails', {
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  nhif: varchar('nhif'),
+  nssf: varchar('nssf'),
+  kraPin: varchar('kra_pin'),
+  allergies: boolean('allergies').default(false).notNull(),
+  allegryDescription: varchar('allegry_description'),
+  illness: boolean('illness').default(false).notNull(),
+  illnessDescription: varchar('illness_description'),
+  conviction: boolean('conviction').default(false).notNull(),
+  convictionDescription: varchar('conviction_description'),
+  bloodType: bloodTypeEnum('blood_type'),
+  educationLevel: educationLevelEnum('education_level'),
+  terminated: boolean('terminated').default(false).notNull(),
+  terminationDescription: varchar('termination_description'),
+  effectiveDate: date('effective_date'),
+  bankName: varchar('bank_name'),
+  branchName: varchar('branch_name'),
+  accountNo: varchar('account_no'),
+  accountName: varchar('account_name'),
+});
+
 export const employees = pgTable(
   'employees',
   {
@@ -576,23 +601,6 @@ export const products = pgTable(
     };
   }
 );
-
-export const employeesOtherdetails = pgTable('employees_otherdetails', {
-  employeeId: integer('employee_id')
-    .notNull()
-    .references(() => employees.id, { onDelete: 'cascade' }),
-  nhif: varchar('nhif'),
-  nssf: varchar('nssf'),
-  kraPin: varchar('kra_pin'),
-  allergies: boolean('allergies').default(false).notNull(),
-  allegryDescription: varchar('allegry_description'),
-  illness: boolean('illness').default(false).notNull(),
-  illnessDescription: varchar('illness_description'),
-  conviction: boolean('conviction').default(false).notNull(),
-  convictionDescription: varchar('conviction_description'),
-  bloodType: bloodTypeEnum('blood_type'),
-  educationLevel: educationLevelEnum('education_level'),
-});
 
 export const ordersDetails = pgTable('orders_details', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
@@ -859,6 +867,17 @@ export const staffLoans = pgTable('staff_loans', {
   reason: text('reason'),
   attachment: text('attachment'),
   completed: boolean('completed').default(false).notNull(),
+});
+
+export const previousLostHours = pgTable('previous_lost_hours', {
+  id: serial('id').primaryKey().notNull(),
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id),
+  lostHourMonth: integer('lost_hour_month').notNull(),
+  lateness: numeric('lateness'),
+  earlyExit: numeric('early_exit'),
+  remarks: text('remarks'),
 });
 
 export const userRoles = pgTable(
