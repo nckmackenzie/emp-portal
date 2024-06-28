@@ -85,5 +85,6 @@ export const createLeave = async (values: TLeaveApplication) => {
     return { error: 'Was unable to save this leave. Contact support.' };
 
   revalidatePath('/dashboard');
-  return redirect('/dashboard');
+  revalidatePath('/leaves');
+  return redirect('/leaves');
 };
