@@ -7,3 +7,9 @@ export const formatStringForDb = (value: string | undefined) => {
 
   return value.trim().toLowerCase();
 };
+
+export function numberFormat(number: string | number) {
+  return new Intl.NumberFormat('en-KE', { maximumFractionDigits: 2 }).format(
+    Number(number)
+  );
+}
