@@ -60,7 +60,7 @@ export function getMenuList(pathname: string): Group[] {
           submenus: [],
         },
         {
-          href: '/loans',
+          href: '/staff-loans',
           label: 'Staff Loans',
           active: pathname.includes('/loans'),
           icon: HandCoins,
