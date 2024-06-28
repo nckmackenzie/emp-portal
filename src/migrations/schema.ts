@@ -639,7 +639,7 @@ export const employeeSession = pgTable('employee_session', {
     .references(() => employeeUsers.id, { onDelete: 'cascade' }),
   expiresAt: timestamp('expires_at', {
     withTimezone: true,
-    mode: 'date',
+    mode: 'string',
   }).notNull(),
 });
 
@@ -846,18 +846,6 @@ export const employeeQualifications = pgTable('employee_qualifications', {
   specialization: varchar('specialization'),
 });
 
-export const loanDeductions = pgTable('loan_deductions', {
-  id: serial('id').primaryKey().notNull(),
-  loanId: integer('loan_id').references(() => staffLoans.id),
-  deductionAmount: numeric('deduction_amount').notNull(),
-  deductionDate: date('deduction_date').notNull(),
-  remarks: text('remarks'),
-  createdBy: uuid('created_by')
-    .notNull()
-    .references(() => users.id),
-  createdDate: date('created_date').defaultNow().notNull(),
-});
-
 export const staffLoans = pgTable('staff_loans', {
   id: serial('id').primaryKey().notNull(),
   loanDate: date('loan_date').notNull(),
@@ -868,6 +856,21 @@ export const staffLoans = pgTable('staff_loans', {
   reason: text('reason'),
   attachment: text('attachment'),
   completed: boolean('completed').default(false).notNull(),
+  approvedAmount: numeric('approved_amount').default('0').notNull(),
+  approvalDate: date('approval_date'),
+  monthySalary: numeric('monthy_salary'),
+});
+
+export const loanDeductions = pgTable('loan_deductions', {
+  id: serial('id').primaryKey().notNull(),
+  loanId: integer('loan_id').references(() => staffLoans.id),
+  deductionAmount: numeric('deduction_amount').notNull(),
+  deductionDate: date('deduction_date').notNull(),
+  remarks: text('remarks'),
+  createdBy: uuid('created_by')
+    .notNull()
+    .references(() => users.id),
+  createdDate: date('created_date').defaultNow().notNull(),
 });
 
 export const previousLostHours = pgTable('previous_lost_hours', {
@@ -1000,6 +1003,7 @@ export const accounts = pgTable(
     };
   }
 );
+
 export const employeeRelations = relations(employees, ({ one, many }) => ({
   contact: one(employeesContacts, {
     fields: [employees.id],
