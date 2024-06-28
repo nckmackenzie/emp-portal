@@ -7,11 +7,14 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 
 import { TEmployee, EducationDetail } from '../_utils/types';
 import { Input } from '@/components/ui/input';
 import { Trash } from 'lucide-react';
+import { CustomSelect } from '@/components/ui/custom-select';
+import { EDUCATION_LEVELS } from '../_utils/utils';
 
 interface EducationDetailsProps {
   form: UseFormReturn<TEmployee>;
@@ -26,7 +29,7 @@ function EducationDetails({
   education,
   onSetEducation,
 }: EducationDetailsProps) {
-  function handleAddEducation(type: 'academic' | 'professional') {
+  function handleAddEducation(type: 'academic' | 'professional' | 'training') {
     onSetEducation(prev => [
       ...prev,
       {
@@ -91,7 +94,34 @@ function EducationDetails({
         >
           Add Professional/Technical Qualification
         </Button>
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={() => handleAddEducation('professional')}
+        >
+          Add Training
+        </Button>
       </div>
+      <FormField
+        control={form.control}
+        name="educationLevel"
+        render={({ field }) => (
+          <FormItem className="col-span-12 md:col-span-6">
+            <FormLabel>Education Level</FormLabel>
+            <FormControl>
+              <CustomSelect
+                className="w-full"
+                placeholder="Select education level"
+                options={EDUCATION_LEVELS}
+                onChange={field.onChange}
+                disabled={isPending}
+                value={field.value}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
       <div className="col-span-12 space-y-4">
         {education.map(edu => (
           <div

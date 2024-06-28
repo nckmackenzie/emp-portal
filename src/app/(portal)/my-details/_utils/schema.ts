@@ -60,11 +60,24 @@ export const employeeSchema = z
     conviction: z.boolean().optional(),
     convictionDescription: z.string().optional(),
     bloodType: z.enum(['A', 'B', 'AB', 'O']).optional(),
+    educationLevel: z
+      .enum([
+        'PHD',
+        'MASTERS-DEGREE',
+        'BACHELORS-DEGREE',
+        'HIGHER-DIPLOMA',
+        'DIPLOMA',
+        'CERTIFICATE',
+        'SECONDARY',
+        'PRIMARY',
+        'NONE',
+      ])
+      .optional(),
     education: z
       .array(
         z.object({
           id: z.string(),
-          type: z.enum(['academic', 'professional']),
+          type: z.enum(['academic', 'professional', 'training']),
           from: z.string(),
           to: z.string(),
           school: z.string(),
@@ -73,6 +86,9 @@ export const employeeSchema = z
         })
       )
       .optional(),
+    termination: z.string().optional(),
+    terminationDetails: z.string().optional(),
+    effectiveDate: z.string().date().optional(),
   })
   .superRefine(({ kraPin }, ctx) => {
     if (kraPin.trim().length > 0 && kraPin.trim().length !== 11) {

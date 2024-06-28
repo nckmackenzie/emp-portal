@@ -16,3 +16,13 @@ export type TFetchedEmployeeChildren = Awaited<
 
 export type TEmployee = z.infer<typeof employeeSchema>;
 export type MaritalStatus = 'WIDOWED' | 'DIVORCED' | 'MARRIED' | 'SINGLE';
+
+export type EducationDetail = {
+  id: string;
+  type: 'academic' | 'professional' | 'training';
+  from: string;
+  to: string;
+  school: string;
+  attainment: string;
+  specialization: string;
+};
