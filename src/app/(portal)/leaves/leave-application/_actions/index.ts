@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 import db from '@/lib/database/db';
-import { validateRequest } from '../../../../../auth';
+import { validateRequest } from '../../../../../../auth';
 import { leaveApplicationSchema } from '../_utils/schema';
 import { TLeaveApplication } from '../_utils/types';
 import { calculateWorkingDays } from '../_utils/utils';

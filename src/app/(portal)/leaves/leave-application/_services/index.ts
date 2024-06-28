@@ -1,7 +1,7 @@
 import { cache } from 'react';
 
 import db from '@/lib/database/db';
-import { validateRequest } from '../../../../../auth';
+import { validateRequest } from '../../../../../../auth';
 
 export const getLeaveTypes = cache(async () => {
   return await db.query.leaveTypes.findMany({
