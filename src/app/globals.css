@@ -102,6 +102,6 @@
   }
 
   .more-btn {
-    @apply outline-none border-none cursor-pointer;
+    @apply outline-none border-none cursor-pointer focus:outline-none focus:border-none;
   }
 }
