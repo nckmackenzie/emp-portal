@@ -45,3 +45,40 @@ export function PendingLoanSkeleton() {
     </Table>
   );
 }
+
+export function LoansTableSkeleton() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Loan Date</TableHead>
+          <TableHead>Loan Amount</TableHead>
+          <TableHead>Total Deductions</TableHead>
+          <TableHead>Loan Balance</TableHead>
+          <TableHead>Expected End Date</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {dummyArray(1).map((_, i) => (
+          <TableRow key={i}>
+            <TableCell>
+              <Skeleton className="h-4 w-24" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-24" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-16" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-24" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-24" />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
