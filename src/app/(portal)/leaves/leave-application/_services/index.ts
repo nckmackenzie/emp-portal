@@ -59,3 +59,33 @@ export const getLeaves = cache(async (leaveType: string) => {
     orderBy: (model, { desc }) => [desc(model.applicationDate)],
   });
 });
+
+export const getLoans = cache(async () => {
+  const user = await checkUserAuth();
+  const loans = await db.query.staffLoans.findMany({
+    columns: {
+      id: true,
+      loanAmount: true,
+      loanDate: true,
+      completed: true,
+      loanStatus: true,
+    },
+    where: (model, { eq, and, or }) =>
+      and(
+        eq(model.employeeId, user.employeeRefId),
+        or(eq(model.loanStatus, 'PENDING'), eq(model.loanStatus, 'APPROVED'))
+      ),
+    with: {
+      loanDeductions: { columns: { deductionAmount: true } },
+    },
+    orderBy: (model, { desc }) => [desc(model.loanDate)],
+  });
+
+  return loans.map(loan => ({
+    ...loan,
+    loanDeductions: loan.loanDeductions.reduce(
+      (acc, deduction) => acc + Number(deduction.deductionAmount),
+      0
+    ),
+  }));
+});
