@@ -1051,3 +1051,14 @@ export const employeeQualificationsRelations = relations(
     }),
   })
 );
+
+export const staffLoanRelations = relations(staffLoans, ({ many }) => ({
+  loanDeductions: many(loanDeductions),
+}));
+
+export const loanDeductionsRelations = relations(loanDeductions, ({ one }) => ({
+  loan: one(staffLoans, {
+    fields: [loanDeductions.loanId],
+    references: [staffLoans.id],
+  }),
+}));
