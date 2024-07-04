@@ -20,14 +20,14 @@ function DashboardCard({ label, value, href, Icon }: DashboardCardProps) {
         </div>
         <div className="space-y-1">
           <div className="text-3xl font-bold text-center">{value}</div>
-          {href && (
+          {/* {href && (
             <Link
               href={href}
               className="text-xs font-semibold text-blue-500 block text-center"
             >
               View Details &rarr;
             </Link>
-          )}
+          )} */}
         </div>
       </CardContent>
     </Card>
