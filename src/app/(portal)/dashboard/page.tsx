@@ -1,6 +1,7 @@
-import { Suspense } from 'react';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
+import { ContentLayout } from '@/components/layout/content-layout';
 import {
   Card,
   CardContent,
@@ -12,17 +13,19 @@ import DashboardCards from './_components/dashboard-cards';
 import LeaveApplications, {
   LeaveTableSkeleton,
 } from './_components/leave-applications';
-import { ContentLayout } from '@/components/layout/content-layout';
+import { DashboardCardSkeleton } from './_components/skeletons';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   return (
     <ContentLayout title="Dashboard">
       <div className="space-y-8">
-        <DashboardCards />
+        <Suspense fallback={<DashboardCardSkeleton />}>
+          <DashboardCards />
+        </Suspense>
         <Card>
           <CardHeader>
             <CardTitle>Leaves applied.</CardTitle>
