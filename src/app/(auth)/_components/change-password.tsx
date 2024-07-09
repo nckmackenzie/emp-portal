@@ -42,7 +42,7 @@ export default function ChangePassword({ token }: Props) {
     startTransition(() => {
       changePassword(values, token)
         .then(data => {
-          if (data.error) setError(data.error);
+          if (data?.error) setError(data.error);
         })
         .catch(err => toast.error(`😞 ${err.message}`));
     });
