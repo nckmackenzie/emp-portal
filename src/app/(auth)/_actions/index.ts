@@ -4,16 +4,18 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { compare, hash } from 'bcrypt-ts';
 import { createId, isCuid } from '@paralleldrive/cuid2';
+import { eq } from 'drizzle-orm';
 
 import { lucia, validateRequest } from '../../../../auth';
 import db from '@/lib/database/db';
 import { TLogin } from '../_types';
 import { changePasswordSchema, loginSchema } from '../_utils/schema';
 import { employeeUsers } from '@/migrations/schema';
-import { eq } from 'drizzle-orm';
+import { EMPLOYEECATEGORY } from '../../../..';
 
 export const login = async (values: TLogin) => {
   const validated = loginSchema.safeParse(values);
+  const token = createId();
 
   if (!validated.success) return { error: 'Invalid data passed.' };
 
@@ -23,12 +25,52 @@ export const login = async (values: TLogin) => {
     where: (model, { eq }) => eq(model.contact, contact),
   });
 
-  if (!user) return { error: 'Invalid contact or password!' };
+  if (!user) {
+    const emp = await db.query.employeesContacts.findFirst({
+      columns: { employeeId: true, emailAddress: true },
+      where: (model, { eq }) => eq(model.primaryContact, contact),
+    });
+
+    if (!emp) {
+      return { error: 'Invalid contact or password!' };
+    }
+
+    const details = await db.query.employees.findFirst({
+      columns: {
+        id: true,
+        idNo: true,
+        otherNames: true,
+        employeeCategory: true,
+        imageUrl: true,
+      },
+      where: (model, { eq }) => eq(model.id, emp.employeeId),
+    });
+
+    if (password !== details?.idNo)
+      return { error: 'Invalid contact or password!' };
+
+    const createdUser = await db
+      .insert(employeeUsers)
+      .values({
+        contact,
+        name: details?.otherNames.toLowerCase() as string,
+        employeeRefId: emp.employeeId,
+        idNumber: details?.idNo as string,
+        employeeType: details?.employeeCategory as EMPLOYEECATEGORY,
+        email: emp.emailAddress,
+        image: details?.imageUrl,
+        resetToken: token,
+      })
+      .returning({ id: employeeUsers.id });
+
+    if (createdUser.length === 0)
+      return { error: 'An error occured. Please try again.' };
+
+    redirect(`/change-password?stage=first-time&resetToken=${token}`);
+  }
 
   if (!user.active)
     return { error: 'This account is currently deactivated.Contact support' };
-
-  const token = createId();
 
   if (user.password === null && password !== user.idNumber) {
     return { error: 'Invalid contact or password!' };
@@ -94,7 +136,9 @@ export const changePassword = async (passwords: any, token: string) => {
     employeeType: user.employeeType as
       | 'NON-UNIONISABLE'
       | 'MANEGEMENT'
-      | 'UNIONISABLE',
+      | 'UNIONISABLE'
+      | 'WORKFLOOR'
+      | 'CONTRACTOR',
     image: user.image,
   });
   const sessionCookie = lucia.createSessionCookie(session.id);
