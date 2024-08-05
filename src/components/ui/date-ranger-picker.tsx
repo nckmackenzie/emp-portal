@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/popover';
 
 import { cn } from '@/lib/utils';
-import { useSetParams } from '@/hooks/global/use-set-params';
+import { useSetParams } from '@/hooks/use-set-params';
 
 interface DateRangeProps {
   date: DateRange | undefined;
