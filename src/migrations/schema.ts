@@ -15,6 +15,7 @@ import {
   date,
   numeric,
   uniqueIndex,
+  bigserial,
   primaryKey,
 } from 'drizzle-orm/pg-core';
 import { relations, sql } from 'drizzle-orm';
@@ -77,6 +78,7 @@ export const employeeCategory = pgEnum('employeeCategory', [
   'UNIONISABLE',
 ]);
 export const employeeStatus = pgEnum('employeeStatus', [
+  'DECEASED',
   'RETIRED',
   'RESIGNED',
   'TERMINATED',
@@ -269,6 +271,7 @@ export const ordersHeader = pgTable(
     isDeleted: boolean('is_deleted').default(false),
     vatType: vatTypeEnum('vat_type').default('NONE').notNull(),
     vatId: integer('vat_id').references(() => vats.id, { onDelete: 'cascade' }),
+    srnReceipt: boolean('srn_receipt').default(false),
   },
   table => {
     return {
@@ -356,10 +359,10 @@ export const stockMovements = pgTable('stock_movements', {
 export const conversions = pgTable('conversions', {
   id: uuid('id').defaultRandom().primaryKey().notNull(),
   conversionDate: date('conversion_date').defaultNow().notNull(),
-  convertingItem: uuid('converting_item')
-    .notNull()
-    .references(() => products.id, { onDelete: 'cascade' }),
-  convertingQuantity: numeric('converting_quantity').notNull(),
+  convertingItem: uuid('converting_item').references(() => products.id, {
+    onDelete: 'cascade',
+  }),
+  convertingQuantity: numeric('converting_quantity'),
   convertedItem: uuid('converted_item')
     .notNull()
     .references(() => products.id, { onDelete: 'cascade' }),
@@ -392,12 +395,6 @@ export const users = pgTable(
     };
   }
 );
-
-export const roles = pgTable('roles', {
-  id: serial('id').primaryKey().notNull(),
-  role: varchar('role').notNull(),
-  menuName: varchar('menu_name').notNull(),
-});
 
 export const mrqDetails = pgTable(
   'mrq_details',
@@ -461,24 +458,13 @@ export const tempDebtors = pgTable(
   }
 );
 
-export const employeesContacts = pgTable('employees_contacts', {
-  employeeId: integer('employee_id')
-    .notNull()
-    .references(() => employees.id, { onDelete: 'cascade' }),
-  primaryContact: varchar('primary_contact', { length: 15 }),
-  alternativeContact: varchar('alternative_contact'),
-  address: varchar('address'),
-  postalCode: varchar('postal_code', { length: 5 }),
-  estate: varchar('estate'),
-  street: varchar('street'),
-  countyId: integer('county_id').references(() => counties.id, {
-    onDelete: 'restrict',
-  }),
-  district: varchar('district'),
-  location: varchar('location'),
-  village: varchar('village'),
-  emailAddress: varchar('email_address', { length: 255 }),
-  passport: varchar('passport'),
+export const roles = pgTable('roles', {
+  id: serial('id').primaryKey().notNull(),
+  role: varchar('role').notNull(),
+  menuName: varchar('menu_name').notNull(),
+  defaultPagePath: varchar('default_page_path', { length: 255 })
+    .default('/dashboard')
+    .notNull(),
 });
 
 export const designations = pgTable('designations', {
@@ -519,6 +505,65 @@ export const employeesOtherdetails = pgTable('employees_otherdetails', {
   accountName: varchar('account_name'),
 });
 
+export const employeesNoks = pgTable('employees_noks', {
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  nameOne: varchar('name_one'),
+  relationOne: varchar('relation_one'),
+  contactOne: varchar('contact_one', { length: 15 }),
+  nameTwo: varchar('name_two'),
+  relationTwo: varchar('relation_two'),
+  contactTwo: varchar('contact_two', { length: 15 }),
+});
+
+export const counties = pgTable('counties', {
+  id: integer('id').primaryKey().notNull(),
+  county: varchar('county').notNull(),
+});
+
+export const products = pgTable(
+  'products',
+  {
+    id: uuid('id').defaultRandom().primaryKey().notNull(),
+    productName: varchar('product_name').notNull(),
+    categoryId: integer('category_id')
+      .notNull()
+      .references(() => productCategories.id),
+    uomId: integer('uom_id').references(() => uoms.id),
+    buyingPrice: numeric('buying_price'),
+    active: boolean('active').default(true),
+    stockItem: boolean('stock_item').default(true),
+    isPeace: boolean('is_peace').default(false).notNull(),
+  },
+  table => {
+    return {
+      productNameIdx: index('product_name_idx').on(table.productName),
+    };
+  }
+);
+
+export const employeesContacts = pgTable('employees_contacts', {
+  employeeId: integer('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  primaryContact: varchar('primary_contact', { length: 15 }),
+  alternativeContact: varchar('alternative_contact'),
+  address: varchar('address'),
+  postalCode: varchar('postal_code', { length: 5 }),
+  estate: varchar('estate'),
+  street: varchar('street'),
+  countyId: integer('county_id').references(() => counties.id, {
+    onDelete: 'restrict',
+  }),
+  district: varchar('district'),
+  location: varchar('location'),
+  village: varchar('village'),
+  emailAddress: varchar('email_address', { length: 255 }),
+  passport: varchar('passport'),
+  drivingLicense: varchar('driving_license'),
+});
+
 export const employees = pgTable(
   'employees',
   {
@@ -554,6 +599,7 @@ export const employees = pgTable(
     nationality: varchar('nationality', { length: 100 }),
     ethnicity: varchar('ethnicity', { length: 100 }),
     workfloorType: workfloorType('workfloor_type'),
+    attendanceId: integer('attendance_id'),
   },
   table => {
     return {
@@ -561,44 +607,6 @@ export const employees = pgTable(
       employeeOthernamesIdx: index('employee_othernames_idx').on(
         table.otherNames
       ),
-    };
-  }
-);
-
-export const employeesNoks = pgTable('employees_noks', {
-  employeeId: integer('employee_id')
-    .notNull()
-    .references(() => employees.id, { onDelete: 'cascade' }),
-  nameOne: varchar('name_one'),
-  relationOne: varchar('relation_one'),
-  contactOne: varchar('contact_one', { length: 15 }),
-  nameTwo: varchar('name_two'),
-  relationTwo: varchar('relation_two'),
-  contactTwo: varchar('contact_two', { length: 15 }),
-});
-
-export const counties = pgTable('counties', {
-  id: integer('id').primaryKey().notNull(),
-  county: varchar('county').notNull(),
-});
-
-export const products = pgTable(
-  'products',
-  {
-    id: uuid('id').defaultRandom().primaryKey().notNull(),
-    productName: varchar('product_name').notNull(),
-    categoryId: integer('category_id')
-      .notNull()
-      .references(() => productCategories.id),
-    uomId: integer('uom_id').references(() => uoms.id),
-    buyingPrice: numeric('buying_price'),
-    active: boolean('active').default(true),
-    stockItem: boolean('stock_item').default(true),
-    isPeace: boolean('is_peace').default(false).notNull(),
-  },
-  table => {
-    return {
-      productNameIdx: index('product_name_idx').on(table.productName),
     };
   }
 );
@@ -659,7 +667,7 @@ export const employeeUsers = pgTable(
     promptPasswordChange: boolean('prompt_password_change').default(false),
     resetToken: text('reset_token'),
     employeeRefId: integer('employee_ref_id').notNull(),
-    idNumber: text('id_number').notNull(),
+    idNumber: text('id_number'),
   },
   table => {
     return {
@@ -846,6 +854,27 @@ export const employeeQualifications = pgTable('employee_qualifications', {
   specialization: varchar('specialization'),
 });
 
+export const jobcardStaffs = pgTable('jobcard_staffs', {
+  id: serial('id').primaryKey().notNull(),
+  taskId: uuid('task_id')
+    .notNull()
+    .references(() => jobcardTasks.id, { onDelete: 'cascade' }),
+  staffId: integer('staff_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+});
+
+export const jobcardTimes = pgTable('jobcard_times', {
+  id: serial('id').primaryKey().notNull(),
+  taskId: uuid('task_id')
+    .notNull()
+    .references(() => jobcardTasks.id, { onDelete: 'cascade' }),
+  pauseTime: timestamp('pause_time', { mode: 'string' }).notNull(),
+  resumeTime: timestamp('resume_time', { mode: 'string' }).notNull(),
+  remarks: text('remarks'),
+  isStart: boolean('is_start').default(false).notNull(),
+});
+
 export const loanDeductions = pgTable('loan_deductions', {
   id: serial('id').primaryKey().notNull(),
   loanId: integer('loan_id').references(() => staffLoans.id),
@@ -884,6 +913,90 @@ export const staffLoans = pgTable('staff_loans', {
   monthySalary: numeric('monthy_salary'),
   loanType: varchar('loan_type').default('existing'),
   loanStatus: leaveStatusEnum('loan_status').default('PENDING').notNull(),
+});
+
+export const jobcardTasks = pgTable(
+  'jobcard_tasks',
+  {
+    id: uuid('id').defaultRandom().primaryKey().notNull(),
+    jobcardNo: varchar('jobcard_no', { length: 10 }),
+    departmentId: integer('department_id')
+      .notNull()
+      .references(() => departments.id),
+    assignedHours: numeric('assigned_hours').default('0').notNull(),
+    startTime: timestamp('start_time', { mode: 'string' }),
+    endTime: timestamp('end_time', { mode: 'string' }),
+    hoursStopped: numeric('hours_stopped').default('0').notNull(),
+    isCompleted: boolean('is_completed').default(false).notNull(),
+    remarks: text('remarks'),
+    jobcardId: uuid('jobcard_id')
+      .notNull()
+      .references(() => jobcards.id),
+  },
+  table => {
+    return {
+      jobardTasksIdx: index('jobard_tasks_idx').on(table.jobcardNo),
+    };
+  }
+);
+
+export const jobcards = pgTable(
+  'jobcards',
+  {
+    id: uuid('id').defaultRandom().primaryKey().notNull(),
+    jobcardNo: varchar('jobcard_no', { length: 7 }).notNull(),
+    client: varchar('client').notNull(),
+    description: text('description').notNull(),
+    value: numeric('value').default('0').notNull(),
+    closed: boolean('closed').default(false).notNull(),
+    jobcardDate: date('jobcard_date').defaultNow().notNull(),
+    createdDate: date('created_date').defaultNow().notNull(),
+  },
+  table => {
+    return {
+      jobcardsJobcardNoUnique: unique('jobcards_jobcard_no_unique').on(
+        table.jobcardNo
+      ),
+    };
+  }
+);
+
+export const srnsHeader = pgTable('srns_header', {
+  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+  id: bigint('id', { mode: 'number' }).primaryKey().notNull(),
+  receiptDate: date('receipt_date').defaultNow().notNull(),
+  orderId: integer('order_id').references(() => ordersHeader.id),
+  createdBy: uuid('created_by')
+    .notNull()
+    .references(() => users.id),
+  createdOn: date('created_on').defaultNow(),
+  isDeleted: boolean('is_deleted').default(false),
+});
+
+export const srnsDetails = pgTable('srns_details', {
+  id: uuid('id').defaultRandom().notNull(),
+  headerId: integer('header_id')
+    .notNull()
+    .references(() => srnsHeader.id),
+  serviceId: uuid('service_id')
+    .notNull()
+    .references(() => services.id),
+  qtyOrdered: numeric('qty_ordered').notNull(),
+  qtyReceived: numeric('qty_received').notNull(),
+  remarks: text('remarks'),
+});
+
+export const attendances = pgTable('attendances', {
+  id: bigserial('id', { mode: 'bigint' }).primaryKey().notNull(),
+  attendanceDate: date('attendance_date').notNull(),
+  employeeId: integer('employee_id').notNull(),
+  timeIn: varchar('time_in', { length: 6 }),
+  break: varchar('break', { length: 6 }),
+  resume: varchar('resume', { length: 6 }),
+  timeOut: varchar('time_out', { length: 6 }),
+  workHour: numeric('work_hour'),
+  otHour: numeric('ot_hour'),
+  shortHour: numeric('short_hour'),
 });
 
 export const userRoles = pgTable(
